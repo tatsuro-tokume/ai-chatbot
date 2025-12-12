@@ -40,11 +40,18 @@ export async function POST(request: NextRequest) {
 
     // Demoモード: レート制限チェック
     if (demoMode === 'demo') {
+      console.log('[DEMO MODE] Entering demo mode block');
+
       const forwarded = request.headers.get('x-forwarded-for');
       const ip = forwarded ? forwarded.split(',')[0] : 'unknown';
+      console.log('[DEMO MODE] IP:', ip);
 
+      console.log('[DEMO MODE] Checking rate limit...');
       const isAllowed = await checkRateLimit(ip);
+      console.log('[DEMO MODE] Rate limit check result:', isAllowed);
+
       if (!isAllowed) {
+        console.log('[DEMO MODE] Rate limit exceeded');
         return NextResponse.json(
           {
             error: '本日のリクエスト上限に達しました。明日再度お試しください。',
@@ -55,9 +62,14 @@ export async function POST(request: NextRequest) {
       }
 
       // AI応答生成
+      console.log('[DEMO MODE] Generating AI response...');
       const response = await generateChatResponse(messages);
-      const remaining = await getRemainingRequests(ip);
+      console.log('[DEMO MODE] AI response generated:', response.substring(0, 50));
 
+      const remaining = await getRemainingRequests(ip);
+      console.log('[DEMO MODE] Remaining requests:', remaining);
+
+      console.log('[DEMO MODE] Returning success response');
       return NextResponse.json({
         message: response,
         mode: 'demo',
@@ -71,7 +83,12 @@ export async function POST(request: NextRequest) {
       { status: 501 }
     );
   } catch (error) {
-    console.error('チャットAPIエラー:', error);
+    console.error('[ERROR] チャットAPIエラー:', error);
+    console.error('[ERROR] Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      type: typeof error,
+    });
     return NextResponse.json(
       {
         error: 'メッセージ送信に失敗しました',

@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const demoMode = process.env.DEMO_MODE || 'mock';
+    const demoMode = process.env.DEMO_MODE || 'demo';
 
     // Mockモード: サンプルデータを返す
     if (demoMode === 'mock') {

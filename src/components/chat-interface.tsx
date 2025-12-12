@@ -23,7 +23,7 @@ const initialMessages: Message[] = [
     content:
       'こんにちは！カスタマーサポートAIです。ご質問やお困りごとがございましたら、お気軽にお聞きください。',
     role: 'assistant',
-    timestamp: new Date(Date.now() - 60000),
+    timestamp: new Date('2025-12-12T00:00:00'),
   },
 ];
 

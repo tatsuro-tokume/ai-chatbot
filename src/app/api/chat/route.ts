@@ -3,15 +3,6 @@ import { generateChatResponse } from '@/lib/openai';
 import { checkRateLimit, getRemainingRequests } from '@/lib/rate-limiter';
 import { getMockResponse } from '@/lib/mock-data';
 
-/**
- * チャットAPI
- * POST /api/chat
- *
- * 3つのモード:
- * - mock: サンプルデータを返す（API課金なし）
- * - demo: 実際のAI応答（レート制限あり）
- * - production: 完全な機能（認証・DB連携）
- */
 export async function POST(request: NextRequest) {
   console.log('[LOG-1] API /api/chat called');
 
@@ -28,7 +19,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const demoMode = process.env.DEMO_MODE || 'demo';
+    const demoMode = (process.env.DEMO_MODE || 'demo').trim();
     console.log('[LOG-5] DEMO_MODE:', {
       raw: process.env.DEMO_MODE,
       demoMode,
@@ -38,7 +29,6 @@ export async function POST(request: NextRequest) {
       strictEqual_production: demoMode === 'production',
     });
 
-    // Mockモード: サンプルデータを返す
     if (demoMode === 'mock') {
       console.log('[LOG-6] Entering MOCK mode block');
       const lastUserMessage = messages.filter((m) => m.role === 'user').pop();
@@ -54,7 +44,6 @@ export async function POST(request: NextRequest) {
 
     console.log('[LOG-8] Not mock mode, checking demo mode');
 
-    // Demoモード: レート制限チェック
     if (demoMode === 'demo') {
       console.log('[LOG-9] Entering DEMO mode block');
 
@@ -104,8 +93,6 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[LOG-19] Not demo mode, falling through to production error');
-
-    // Productionモード（将来実装）
     console.log('[LOG-20] Returning production not implemented');
     return NextResponse.json(
       { error: 'Productionモードは未実装です', code: 'NOT_IMPLEMENTED' },

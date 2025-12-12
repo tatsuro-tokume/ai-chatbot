@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     const demoMode = process.env.DEMO_MODE || 'demo';
+    console.log('[DEBUG] DEMO_MODE:', process.env.DEMO_MODE, 'demoMode:', demoMode);
 
     // Mockモード: サンプルデータを返す
     if (demoMode === 'mock') {
